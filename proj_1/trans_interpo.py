@@ -4,16 +4,42 @@ import math
 from itertools import product
 
 "ok"
-def scale(img, height, width, scale_size):
+def scale(img, height, width, scale_size, method):
   new_height = math.ceil(height * scale_size)
   new_width  = math.ceil(width  * scale_size)
   blank_image = np.zeros((new_height, new_width, 1), np.uint8)
-  mask = np.zeros((new_height, new_width), np.uint8)
+  if method is "NEAREST_NEIGHBOR":
+    for row,col in product(range(0, new_height), range(0, new_width)):
+      blank_image[row, col] = img[row//scale_size, col//scale_size]
+  elif method is "BILINEAR":
+    for row,col in product(range(0, new_height), range(0, new_width)):
+      map_org = (row/scale_size, col/scale_size)
+      base = (math.floor(map_org[0]), math.floor(map_org[1]))
+      bias = (map_org[0]-base[0], map_org[1]-base[1])
+      if base[0]+1 < height and base[1]+1 < width:
+        left  = img[base[0]  , base[1]]   *    bias[0] + \
+                img[base[0]+1, base[1]]   * (1-bias[0])
+        right = img[base[0]  , base[1]+1] *    bias[0] + \
+                img[base[0]+1, base[1]+1] * (1-bias[0])
+        blank_image[row, col] = left*bias[1] + right*(1-bias[1])
+      elif base[0]+1 < height:
+        left  = img[base[0]  , base[1]]   *    bias[0] + \
+                img[base[0]+1, base[1]]   * (1-bias[0])
+        blank_image[row, col] = left
+      elif base[1]+1 < width:
+        top = img[base[0], base[1]]   *    bias[0] + \
+              img[base[0], base[1]+1] * (1-bias[0])
+        blank_image[row, col] = top
+      #else:
+      #boundary still be a problem
+  #elif method is "BICUBIC":
+    
+  """
   for col,row in product(range(0, width), range(0, height)):
     blank_image[row*scale_size, col*scale_size] = img[row, col]
-    mask[row*scale_size, col*scale_size] = 255
+  """
   # here to do interpolation
-  cv.imshow('image',mask)
+  cv.imshow('image', blank_image)
   cv.waitKey(0)
   cv.destroyAllWindows()
   return 0
@@ -83,27 +109,14 @@ def shear(img, height, width, size):
   cv.destroyAllWindows()
   return 0
 
-def nearest_neighbor(img, mask):
-  height, width = img.shape
-  
-  return 0
-
-def bilinear():
-  return 0
-
-def bicubic():
-  return 0
-
-
-
 if __name__ == '__main__':
   # Load an color image in grayscale
-  img = cv.imread("images/photo.jpg", 0)
+  img = cv.imread("images/Fig0236(a)(letter_T).tif", 0)
   print(img.shape)
   height, width = img.shape
 
   #shear(img, height, width, (0.5, 0))
-  scale(img, height, width, 2)
+  scale(img, height, width, 5, "BILINEAR")
   #translate(img, height, width, 30, 30)
   ##rotate(img, height, width, 30)
   #print(img[height-1, width-1])
