@@ -3,16 +3,94 @@ import numpy as np
 import math
 from itertools import product
 
+def _get_weight(bias):
+  bias = abs(bias)
+  weights = []
+  for i in range(1, -3, -1):
+    tmp_bias = abs(bias+i)
+    if tmp_bias >= 0 and tmp_bias < 1:
+      weights.append(1 - 2*(tmp_bias**2) + (tmp_bias**3))
+    elif tmp_bias >= 1 and tmp_bias < 2:
+      weights.append(4 - 8*tmp_bias + 5*(tmp_bias**2) - (tmp_bias**3))
+    else:
+      weights.append(0)
+  return weights
+
+def _is_in_boundary(point, height, width):
+  if point[0] < 0 or point[0] >= height:
+    return False
+  if point[1] < 0 or point[1] >= width:
+    return False
+  return True
+
+def bicubic(img, row, col):
+  height, width = img.shape
+  base = (math.floor(row), math.floor(col))
+  bias = (row-base[0], col-base[1])
+  wu = _get_weight(bias[0])
+  wv = _get_weight(bias[1])
+  val = 0
+  for cj in range(-1, 3):
+    v_value = 0
+    for ri in range(-1, 3):
+      if _is_in_boundary((base[0]+ri, base[1]+cj), height, width):
+        v_value += wu[ri+1] * img[base[0]+ri, base[1]+cj]
+      else:
+        return 128
+    val += wv[cj+1] * v_value
+  if val > 255:
+    val = 255
+  elif val < 0:
+    val = 0
+  return val
+
+def nearest_neighbor(img, mrow, mcol):
+  if _is_in_boundary((round(mrow), round(mcol)), height, width):
+    return img[round(mrow), round(mcol)]
+  
+
+def bilinear(img, row, col, angle):
+  return 0
 # (scale, rotate, shear) all need to interpolate no matter zoom in or zoom out
+FUNC = {"NEAREST_NEIGHBOR": nearest_neighbor, 
+        "BILINEAR"        : bilinear, 
+        "BICUBIC"         : bicubic}
 
 "ok"
 def scale(img, height, width, scale_size, method):
   new_height = math.ceil(height * scale_size)
   new_width  = math.ceil(width  * scale_size)
   blank_image = np.zeros((new_height, new_width, 1), np.uint8)
-  if method is "NEAREST_NEIGHBOR":
-    for row,col in product(range(0, new_height), range(0, new_width)):
-      blank_image[row, col] = img[round(row/scale_size), round(col/scale_size)]
+
+  for row,col in product(range(0, new_height), range(0, new_width)):
+    #blank_image[row, col] = FUNC[method](img, row/scale_size, col/scale_size)
+    if method is "NEAREST_NEIGHBOR":
+      map_point = (round(row/scale_size), round(col/scale_size))
+      if _is_in_boundary(map_point, height, width):
+        blank_image[row, col] = img[map_point[0], map_point[1]]
+    elif method is "BILINEAR":
+      map_point = (row/scale_size, col/scale_size)
+      base = (math.floor(map_point[0]), math.floor(map_point[1]))
+      bias = (map_point[0]-base[0], map_point[1]-base[1])
+      if base[0]+1 < height and base[1]+1 < width:
+        left  = img[base[0]  , base[1]]   *    bias[0] + \
+                img[base[0]+1, base[1]]   * (1-bias[0])
+        right = img[base[0]  , base[1]+1] *    bias[0] + \
+                img[base[0]+1, base[1]+1] * (1-bias[0])
+        blank_image[row, col] = left*bias[1] + right*(1-bias[1])
+      elif base[0]+1 < height and base[1] < width:
+        left  = img[base[0]  , base[1]]   *    bias[0] + \
+                img[base[0]+1, base[1]]   * (1-bias[0])
+        blank_image[row, col] = left
+      elif base[1]+1 < width and base[0] < height:
+        top = img[base[0], base[1]]   *    bias[0] + \
+              img[base[0], base[1]+1] * (1-bias[0])
+        blank_image[row, col] = top
+    elif method is "BICUBIC":
+      map_point = (row/scale_size, col/scale_size)
+      blank_image[row, col] = bicubic(img, map_point[0], map_point[1])
+      
+  """
   elif method is "BILINEAR":
     for row,col in product(range(0, new_height), range(0, new_width)):
       map_org = (row/scale_size, col/scale_size)
@@ -35,12 +113,7 @@ def scale(img, height, width, scale_size, method):
       #else:
       #boundary still be a problem
   #elif method is "BICUBIC":
-    
   """
-  for col,row in product(range(0, width), range(0, height)):
-    blank_image[row*scale_size, col*scale_size] = img[row, col]
-  """
-  # here to do interpolation
   cv.imshow('image', blank_image)
   cv.waitKey(0)
   cv.destroyAllWindows()
@@ -64,51 +137,7 @@ def get_offset(height, width, angle):
                   key=lambda x: x[1])[1])
   return row_min, col_min
 
-def _get_weight(bias):
-  bias = abs(bias)
-  weights = []
-  for i in range(1, -3, -1):
-    tmp_bias = abs(bias+i)
-    if tmp_bias >= 0 and tmp_bias < 1:
-      weights.append(1 - 2*(tmp_bias**2) + (tmp_bias**3))
-    elif tmp_bias >= 1 and tmp_bias < 2:
-      weights.append(4 - 8*tmp_bias + 5*(tmp_bias**2) - (tmp_bias**3))
-    else:
-      weights.append(0)
-  #with open("weight", "a") as f:
-  #  f.write("{}, {}, {}, {}\n".format(weights[0], weights[1], weights[2], weights[3]))
-  return weights
-  #return [-0.14699999999999935, 0.8470000000000001, 0.36300000000000004, -0.06299999999999972]
-
-def bicubic(img, row, col, angle):
-
-  map_point = get_rotate_point((row, col), -angle)
-  base = (math.floor(map_point[0]), math.floor(map_point[1]))
-  bias = (map_point[0]-base[0], map_point[1]-base[1])
-  wu = _get_weight(bias[0])
-  wv = _get_weight(bias[1])
-  val = 0
-  for cj in range(-1, 3):
-    v_value = 0
-    for ri in range(-1, 3):
-      if _is_in_boundary((base[0]+ri, base[1]+cj), height, width):
-        v_value += wu[ri+1] * img[base[0]+ri, base[1]+cj]
-      else:
-        return 128
-    val += wv[cj+1] * v_value
-  if val > 255:
-    val = 255
-  elif val < 0:
-    val = 0
-  return val
        
-def _is_in_boundary(point, height, width):
-  if point[0] < 0 or point[0] >= height:
-    return False
-  if point[1] < 0 or point[1] >= width:
-    return False
-  return True
-
 def rotate(img, height, width, angle, method):
   theta = angle / 180 * math.pi
   vcos = math.cos(theta)
@@ -143,7 +172,8 @@ def rotate(img, height, width, angle, method):
         blank_image[row, col] = 128
       # [bug] boundary
     elif method is "BICUBIC":
-      blank_image[row, col] = bicubic(img, row+offset[0], col+offset[1], angle)
+      map_point = get_rotate_point((row+offset[0], col+offset[1]), -angle)
+      blank_image[row, col] = bicubic(img, map_point[0], map_point[1])
       """
       elif base[0]+1 < height and base[1] < width:
         left  = img[base[0]  , base[1]]   *    bias[0] + \
@@ -197,9 +227,9 @@ if __name__ == '__main__':
 
   print(_get_weight(0.3))
   #shear(img, height, width, (0.5, 0))
-  #scale(img, height, width, 5, "BILINEAR")
+  scale(img, height, width, 0.2, "BICUBIC")
   #translate(img, height, width, 30, 30)
-  rotate(img, height, width, 30, "BICUBIC")
+  #rotate(img, height, width, 30, "BICUBIC")
   #print(img[height-1, width-1])
   """
   cv.imshow('image',img)
