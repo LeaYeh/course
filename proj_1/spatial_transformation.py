@@ -3,7 +3,7 @@ import numpy as np
 import math
 from itertools import product
 
-# get weights by bicubic formulas
+# get weights by bicubic's formulas
 def _get_weight(bias):
   bias = abs(bias)
   weights = []
