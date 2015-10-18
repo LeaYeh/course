@@ -123,13 +123,8 @@ def rotate(img, angle, method):
   new_width  = round(height*abs(vsin) + width*abs(vcos))
   blank_image = np.zeros((new_height, new_width, 1), np.uint8)
   for row,col in product(range(0, new_height), range(0, new_width)):
-    if method is "NEAREST_NEIGHBOR":
-      map_point = _get_rotate_point(
-                      (round(row+offset[0]), round(col+offset[1])), -angle)
-      blank_image[row, col] = FUNC[method](img, map_point[0], map_point[1])
-    else:
-      map_point = _get_rotate_point((row+offset[0], col+offset[1]), -angle)
-      blank_image[row, col] = FUNC[method](img, map_point[0], map_point[1])
+    map_point = _get_rotate_point((row+offset[0], col+offset[1]), -angle)
+    blank_image[row, col] = FUNC[method](img, map_point[0], map_point[1])
   cv.imshow('image',blank_image)
   cv.waitKey(0)
   cv.destroyAllWindows()
