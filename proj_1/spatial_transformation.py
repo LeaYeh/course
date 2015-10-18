@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import math
+import sys
 from itertools import product
 
 # get weights by bicubic's formulas
@@ -104,13 +105,15 @@ def bicubic(img, row, col):
 
 
 def scale(img, scale_size, method):
-  print("start to scale image ...")
+  print("start to scale image ...", end='')
+  sys.stdout.flush()
   height, width = (img.shape[0], img.shape[1])
   new_height = math.ceil(height * scale_size)
   new_width  = math.ceil(width  * scale_size)
   blank_image = np.zeros((new_height, new_width, 1), np.uint8)
   for row,col in product(range(0, new_height), range(0, new_width)):
     blank_image[row, col] = FUNC[method](img, row / scale_size, col / scale_size)
+  print("done")
   cv.imshow('image', blank_image)
   cv.waitKey(0)
   cv.destroyAllWindows()
@@ -121,7 +124,8 @@ def scale(img, scale_size, method):
 # after rotation some pixel will be out of result image,
 # so we need shift an offset
 def rotate(img, angle, method):
-  print("start to rotate image ...")
+  print("start to rotate image ...", end='')
+  sys.stdout.flush()
   height, width = img.shape[0], img.shape[1]
   theta = angle / 180 * math.pi
   vcos = math.cos(theta)
@@ -133,6 +137,7 @@ def rotate(img, angle, method):
   for row, col in product(range(0, new_height), range(0, new_width)):
     map_point = _get_rotate_point((row + offset[0], col + offset[1]), -angle)
     blank_image[row, col] = FUNC[method](img, map_point[0], map_point[1])
+  print("done")
   cv.imshow('image', blank_image)
   cv.waitKey(0)
   cv.destroyAllWindows()
@@ -140,7 +145,8 @@ def rotate(img, angle, method):
 
 
 def translate(img, trans_row, trans_col):
-  print("start to translate image ...")
+  print("start to translate image ...", end='')
+  sys.stdout.flush()
   height, width = img.shape[0], img.shape[1]
   # create a blank image as result
   blank_image = np.zeros((height, width, 1), np.uint8)
@@ -153,6 +159,7 @@ def translate(img, trans_row, trans_col):
     else:
       # if result img position not in org image set value to 128
       blank_image[row, col] = 128
+  print("done")
   cv.imshow('image',blank_image)
   cv.waitKey(0)
   cv.destroyAllWindows()
@@ -160,7 +167,8 @@ def translate(img, trans_row, trans_col):
 
 
 def shear(img, size, method):
-  print("start to shear image ...")
+  print("start to shear image ...", end='')
+  sys.stdout.flush()
   height, width = (img.shape[0], img.shape[1])
   new_height = round(size[0] * width  + height)
   new_width  = round(size[1] * height + width)
@@ -168,6 +176,7 @@ def shear(img, size, method):
   for row, col in product(range(0, new_height), range(0, new_width)):
     map_point = (round(row - size[0] * col), round(col - size[1] * row))
     blank_image[row, col] = FUNC[method](img, map_point[0], map_point[1])
+  print("done")
   cv.imshow('image',blank_image)
   cv.waitKey(0)
   cv.destroyAllWindows()
