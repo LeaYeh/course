@@ -8,11 +8,11 @@ def _get_weight(bias):
   bias = abs(bias)
   weights = []
   for i in range(1, -3, -1):
-    tmp_bias = abs(bias+i)
+    tmp_bias = abs(bias + i)
     if tmp_bias >= 0 and tmp_bias < 1:
-      weights.append(1 - 2*(tmp_bias**2) + (tmp_bias**3))
+      weights.append(1 - 2 * (tmp_bias ** 2) + (tmp_bias ** 3))
     elif tmp_bias >= 1 and tmp_bias < 2:
-      weights.append(4 - 8*tmp_bias + 5*(tmp_bias**2) - (tmp_bias**3))
+      weights.append(4 - 8 * tmp_bias + 5 * (tmp_bias ** 2) - (tmp_bias ** 3))
     else:
       weights.append(0)
   return weights
@@ -31,7 +31,8 @@ def _get_rotate_point(point, angle):
   theta = angle / 180 * math.pi
   vcos = math.cos(theta)
   vsin = math.sin(theta)
-  return [point[0]*vcos - point[1]*vsin, point[0]*vsin + point[1]*vcos]
+  return [point[0] * vcos - point[1] * vsin, point[0] * vsin + point[1] * vcos]
+
 
 # get offset for shift image to centroid
 def _get_offset(height, width, angle):
@@ -39,16 +40,25 @@ def _get_offset(height, width, angle):
   left_down  = _get_rotate_point((height, 0), angle)
   right_top  = _get_rotate_point((0, width), angle)
   right_down = _get_rotate_point((height, width), angle)
-  row_min = math.floor(min([left_top, left_down, right_top, right_down], 
-                  key=lambda x: x[0])[0])
-  col_min = math.floor(min([left_top, left_down, right_top, right_down], 
-                  key=lambda x: x[1])[1])
+  row_min = math.floor(
+              min(
+                [left_top, left_down, right_top, right_down], 
+                key=lambda x: x[0]
+              )[0]
+            )
+  col_min = math.floor(
+              min(
+                [left_top, left_down, right_top, right_down], 
+                key=lambda x: x[1]
+              )[1]
+            )
   return row_min, col_min
+
 
 # implement nearest neighbor alg.
 def nearest_neighbor(img, mrow, mcol):
-  height, width = (img.shape[0], img.shape[1])
-  row, col = [round(mrow), round(mcol)]
+  height, width = img.shape[0], img.shape[1]
+  row, col = round(mrow), round(mcol)
   if _is_in_boundary((row, col), height, width):
     return img[row, col]
   return 128
@@ -56,7 +66,7 @@ def nearest_neighbor(img, mrow, mcol):
 
 # implement bilinear alg.
 def bilinear(img, mrow, mcol):
-  height, width = (img.shape[0], img.shape[1])
+  height, width = img.shape[0], img.shape[1]
   base = (math.floor(mrow), math.floor(mcol))
   bias = (mrow-base[0], mcol-base[1])
   if _is_in_boundary((base[0]+1, base[1]+1), height, width):
@@ -65,16 +75,16 @@ def bilinear(img, mrow, mcol):
     right = img[base[0]  , base[1]+1] *    bias[0] + \
             img[base[0]+1, base[1]+1] * (1-bias[0])
     return left*bias[1] + right*(1-bias[1])
-  else:
-    return 128
+  return 128
+
 
 # implement bicubic alg.
 def bicubic(img, row, col):
-  height, width = (img.shape[0], img.shape[1])
+  height, width = img.shape[0], img.shape[1]
   # base = (i, j)
   base = (math.floor(row), math.floor(col))
   # bias = (u, v)
-  bias = (row-base[0], col-base[1])
+  bias = (row - base[0], col - base[1])
   # calc S(u) and S(v)
   wu = _get_weight(bias[0])
   wv = _get_weight(bias[1])
@@ -82,11 +92,10 @@ def bicubic(img, row, col):
   for cj in range(-1, 3):
     v_value = 0
     for ri in range(-1, 3):
-      if _is_in_boundary((base[0]+ri, base[1]+cj), height, width):
-        v_value += wu[ri+1] * img[base[0]+ri, base[1]+cj]
-      else:
+      if not _is_in_boundary((base[0] + ri, base[1] + cj), height, width):
         return 128
-    val += wv[cj+1] * v_value
+      v_value += wu[ri + 1] * img[base[0] + ri, base[1] + cj]
+    val += wv[cj + 1] * v_value
   if val > 255:
     val = 255
   elif val < 0:
@@ -100,9 +109,8 @@ def scale(img, scale_size, method):
   new_height = math.ceil(height * scale_size)
   new_width  = math.ceil(width  * scale_size)
   blank_image = np.zeros((new_height, new_width, 1), np.uint8)
-  
   for row,col in product(range(0, new_height), range(0, new_width)):
-    blank_image[row, col] = FUNC[method](img, row/scale_size, col/scale_size)
+    blank_image[row, col] = FUNC[method](img, row / scale_size, col / scale_size)
   cv.imshow('image', blank_image)
   cv.waitKey(0)
   cv.destroyAllWindows()
@@ -114,18 +122,18 @@ def scale(img, scale_size, method):
 # so we need shift an offset
 def rotate(img, angle, method):
   print("start to rotate image ...")
-  height, width = (img.shape[0], img.shape[1])
+  height, width = img.shape[0], img.shape[1]
   theta = angle / 180 * math.pi
   vcos = math.cos(theta)
   vsin = math.sin(theta)
   offset = _get_offset(height, width, angle)
-  new_height = round(width*abs(vsin) + height*abs(vcos))
-  new_width  = round(height*abs(vsin) + width*abs(vcos))
+  new_height = round(width * abs(vsin) + height * abs(vcos))
+  new_width  = round(height * abs(vsin) + width * abs(vcos))
   blank_image = np.zeros((new_height, new_width, 1), np.uint8)
-  for row,col in product(range(0, new_height), range(0, new_width)):
-    map_point = _get_rotate_point((row+offset[0], col+offset[1]), -angle)
+  for row, col in product(range(0, new_height), range(0, new_width)):
+    map_point = _get_rotate_point((row + offset[0], col + offset[1]), -angle)
     blank_image[row, col] = FUNC[method](img, map_point[0], map_point[1])
-  cv.imshow('image',blank_image)
+  cv.imshow('image', blank_image)
   cv.waitKey(0)
   cv.destroyAllWindows()
   return blank_image
@@ -133,11 +141,11 @@ def rotate(img, angle, method):
 
 def translate(img, trans_row, trans_col):
   print("start to translate image ...")
-  height, width = (img.shape[0], img.shape[1])
+  height, width = img.shape[0], img.shape[1]
   # create a blank image as result
   blank_image = np.zeros((height, width, 1), np.uint8)
   # from result img position mapping to org image
-  for row,col in product(range(0, height), range(0, width)):
+  for row, col in product(range(0, height), range(0, width)):
     map_point = (row - trans_row, col - trans_col)
     if _is_in_boundary(map_point, height, width):
       # set value from correspond import position     
@@ -154,11 +162,11 @@ def translate(img, trans_row, trans_col):
 def shear(img, size, method):
   print("start to shear image ...")
   height, width = (img.shape[0], img.shape[1])
-  new_height = round(size[0]*width  + height)
-  new_width  = round(size[1]*height + width)
+  new_height = round(size[0] * width  + height)
+  new_width  = round(size[1] * height + width)
   blank_image = np.zeros((new_height, new_width, 1), np.uint8) 
-  for row,col in product(range(0, new_height), range(0, new_width)):
-    map_point = (round(row - size[0]*col), round(col - size[1]*row))
+  for row, col in product(range(0, new_height), range(0, new_width)):
+    map_point = (round(row - size[0] * col), round(col - size[1] * row))
     blank_image[row, col] = FUNC[method](img, map_point[0], map_point[1])
   cv.imshow('image',blank_image)
   cv.waitKey(0)
@@ -174,7 +182,7 @@ if __name__ == '__main__':
   # Load an color image in grayscale
   img = cv.imread("images/Fig0236(a)(letter_T).tif", 0)
 
-  new_img = scale(img, 1.5, "BILINEAR")
+  new_img = scale(img, 2, "BILINEAR")
   new_img = shear(img, (0.5, 0), "BILINEAR")
   new_img = shear(new_img, (0, 0.5), "NEAREST_NEIGHBOR")
   new_img = rotate(img, 30, "BICUBIC")
