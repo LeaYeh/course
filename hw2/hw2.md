@@ -1,13 +1,7 @@
 ## Hands-On Exercises ##
 
 ### [1] Find and summarize the network-related modules ###
-#### protocol layer ####
-
-#### purpose ####
-
-#### programming language ####
-
-#### key implement alg. or mechanisms ####
+https://docs.google.com/spreadsheets/d/1vn2OIxXz6KjXyDxRiWwmwZLILZwBaQtTrxL0E7g7VO4/edit#gid=0
 
 ## Written Exercises ##
 
