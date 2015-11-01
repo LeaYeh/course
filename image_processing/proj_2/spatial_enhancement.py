@@ -10,6 +10,15 @@ import matplotlib.pyplot as plt
 from numpy.random import normal
 gaussian_numbers = normal(size=10)
 
+def show_histogram(img):
+  print("show histogram")
+  height, width = (img.shape[0], img.shape[1])
+  n, bins, patches = plt.hist(img.ravel(), 256, [0,256])
+  plt.xlabel('gray level')
+  plt.ylabel('number')
+  plt.grid(True)
+  plt.show()
+  return 0
 
 
 if __name__ == '__main__':
