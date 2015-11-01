@@ -81,6 +81,30 @@ def powerlaw_transform(img, c, gamma):
   return blank_image
 
 
+def histogram_equalize(img):
+  height, width = (img.shape[0], img.shape[1])
+  blank_image = np.zeros((height, width, 1), np.uint8)
+  org_hist = [0] * 256
+  n = height * width
+  
+  for row, col in product(range(0, height), range(0, width)):
+    org_hist[ img[row, col] ] += 1
+  pdf = list(map(lambda x: x / n, org_hist))
+  cdf = list(map(lambda x: sum(pdf[:x+1]), range(0, len(pdf))))
+
+  for row, col in product(range(0, height), range(0, width)):
+    blank_image[row, col] = 256 * cdf[ img[row, col] ]
+
+  cv.imshow('input img', img)
+  cv.imshow('hist equalize res', blank_image)
+  cv.waitKey(0)
+  cv.destroyAllWindows()
+  show_histogram(img)
+  show_histogram(blank_image)
+  
+  return blank_image
+
+
 if __name__ == '__main__':
   # Load an color image in grayscale
   img = cv.imread("images/Fig0308(a)(fractured_spine).tif", 0)
