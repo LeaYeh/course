@@ -44,7 +44,7 @@ def log_transform(img, c):
       blank_image[row, col] = c * math.log10(1 + img[row, col])
   #blank_image =list(
   #                  map(
-  #                    lambda x: x * 255 / (max_val - min_val), 
+  #                    lambda x: x * 255 / (max_val - min_val),
   #                    blank_image.ravel()
   #                  )
   #                 ).reshape(height, width)
@@ -73,7 +73,7 @@ def powerlaw_transform(img, c, gamma):
 
     for row, col in product(range(0, height), range(0, width)):
       blank_image[row, col] = tmp_image[row, col] * 255 / max_val
-  
+
   cv.imshow('powerlaw res', blank_image)
   cv.waitKey(0)
   cv.destroyAllWindows()
@@ -86,7 +86,7 @@ def histogram_equalize(img):
   blank_image = np.zeros((height, width, 1), np.uint8)
   org_hist = [0] * 256
   n = height * width
-  
+
   for row, col in product(range(0, height), range(0, width)):
     org_hist[ img[row, col] ] += 1
   pdf = list(map(lambda x: x / n, org_hist))
@@ -101,7 +101,7 @@ def histogram_equalize(img):
   cv.destroyAllWindows()
   show_histogram(img)
   show_histogram(blank_image)
-  
+
   return blank_image
 
 
@@ -134,4 +134,4 @@ if __name__ == '__main__':
   #histogram_equalize(img)
   #histeq_by_opencv(img)
   #show_histogram(img)
- 
+
