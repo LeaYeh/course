@@ -125,6 +125,11 @@ def _filter_conv(src, mask):
   return dst
 
 
+def laplacian_enhance(img, n = 3):
+  #mask = _get_laplacian_mask(n)
+  return _filter_conv(img, lap_mask)
+
+
 if __name__ == '__main__':
   # Load an color image in grayscale
   img = cv.imread("images/Fig0308(a)(fractured_spine).tif", 0)
