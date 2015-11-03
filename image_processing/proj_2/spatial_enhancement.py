@@ -105,6 +105,26 @@ def histogram_equalize(img):
   return blank_image
 
 
+def _filter_conv(src, mask):
+  height, width = (src.shape[0], src.shape[1])
+  dst = src.copy()
+  border = len(mask) // 2
+
+  for row, col in product(range(border, height - border), range(border, width - border)):
+    tmp = 0
+    for i, j in product(range(-1, 2), range(-1, 2)):
+      tmp += mask[i + 1, j + 1] * src[row + i, col + j]
+
+    if tmp < 0:
+      dst[row, col] = 0
+    elif tmp > 255:
+      dst[row, col] = 255
+    else:
+      dst[row, col] = tmp
+
+  return dst
+
+
 if __name__ == '__main__':
   # Load an color image in grayscale
   img = cv.imread("images/Fig0308(a)(fractured_spine).tif", 0)
