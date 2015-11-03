@@ -130,6 +130,15 @@ def laplacian_enhance(img, n = 3):
   return _filter_conv(img, lap_mask)
 
 
+def highboost_filter(img, c, n = 3):
+  mask = [0] * (n ** 2)
+  mask[(n ** 2) // 2] = 1
+  mask = list(zip(*[iter(mask)] * 3))
+  mask = np.array(mask)
+
+  return _filter_conv(img, mask + lap_mask)
+
+
 if __name__ == '__main__':
   # Load an color image in grayscale
   img = cv.imread("images/Fig0308(a)(fractured_spine).tif", 0)
