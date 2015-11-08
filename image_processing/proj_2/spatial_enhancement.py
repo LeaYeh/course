@@ -64,23 +64,18 @@ def histogram_equalize(img):
 
 
 def _filter_conv(src, mask):
+  border = len(mask) // 2
+  src = cv.copyMakeBorder(src, border, border, border, border, cv.BORDER_CONSTANT)
   height, width = (src.shape[0], src.shape[1])
   dst = src.copy()
-  border = len(mask) // 2
 
   for row, col in product(range(border, height - border), range(border, width - border)):
-    tmp = 0
+    dst[row, col] = 0
     for i, j in product(range(-1, 2), range(-1, 2)):
-      tmp += mask[i + 1, j + 1] * src[row + i, col + j]
+      dst[row, col] += mask[i + 1, j + 1] * src[row + i, col + j]
 
-    if tmp < 0:
-      dst[row, col] = 0
-    elif tmp > 255:
-      dst[row, col] = 255
-    else:
-      dst[row, col] = tmp
 
-  return dst
+  return dst[border: -border][:, border: -border]
 
 
 def laplacian_filter(img, n = 3):
