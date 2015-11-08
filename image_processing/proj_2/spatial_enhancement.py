@@ -122,6 +122,38 @@ def highboost_filter_pdf(img, k, n = 3):
 
   return res_img
 
+def smooth(img, n=3):
+  print("image smoothing...", end='', flush=True)
+  # create avg kernel
+  mask = np.array([1] * (n ** 2)) / (n ** 2)
+  mask = mask.reshape((n, n))
+  dst = _filter_conv(img, mask)
+
+  return dst
+
+
+def sobel_filter(img):
+  print("sobel gradient...")
+  # create sobel kernel x-axis and y-axis
+  mask_x = np.array(
+            ((1, 2, 1),
+            (0, 0, 0),
+            (-1, -2, -1))
+           )
+  mask_y = np.array(
+            ((1, 0, -1),
+            (2, 0, -2),
+            (1, 0, -1))
+           )
+  print("[x-axis filter]")
+  img_x = _filter_conv(img, mask_x)
+  print("[y-axis filter]")
+  img_y = _filter_conv(img, mask_y)
+  res = ((img_x ** 2) + (img_y ** 2)) ** 0.5
+
+  return res
+
+
 
   #log_transform(img, 30)
   #powerlaw_transform(img, -1, 3)
