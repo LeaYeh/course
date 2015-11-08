@@ -150,9 +150,9 @@ def sobel_filter(img):
             (2, 0, -2),
             (1, 0, -1))
            )
-  print("[x-axis filter]")
+  print("[x-axis filter] ", end='', flush=True)
   img_x = _filter_conv(img, mask_x)
-  print("[y-axis filter]")
+  print("[y-axis filter] ", end='', flush=True)
   img_y = _filter_conv(img, mask_y)
   res = ((img_x ** 2) + (img_y ** 2)) ** 0.5
 
@@ -218,8 +218,6 @@ if __name__ == '__main__':
   b = normalize(b)
   g = b + f
   show_and_write(g, "process(g)")
-  h = log_transform(g, 100)
-  show_and_write(h, "process(h)")
   ## skeleton_orig
   # a = img = img.astype(float)
   # show_and_write(img, "step(a)", 0)
