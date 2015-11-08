@@ -7,8 +7,6 @@ import matplotlib
 matplotlib.use("Qt4Agg")
 import matplotlib.pyplot as plt
 
-from numpy.random import normal
-gaussian_numbers = normal(size=10)
 
 def show_histogram(img):
   print("show histogram...", end='', flush=True)
@@ -117,9 +115,6 @@ def highboost_filter(img, c, n = 3):
   return _filter_conv(img, mask + lap_mask)
 
 
-if __name__ == '__main__':
-  # Load an color image in grayscale
-  img = cv.imread("images/Fig0308(a)(fractured_spine).tif", 0)
 def highboost_filter_pdf(img, k, n = 3):
   print("high-boost...", end='', flush=True)
   border = n // 2
