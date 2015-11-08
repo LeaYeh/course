@@ -11,38 +11,45 @@ from numpy.random import normal
 gaussian_numbers = normal(size=10)
 
 def show_histogram(img):
-  print("show histogram")
+  print("show histogram...", end='', flush=True)
   height, width = (img.shape[0], img.shape[1])
   n, bins, patches = plt.hist(img.ravel(), 256, [0,256])
   plt.xlabel('gray level')
   plt.ylabel('number')
   plt.grid(True)
   plt.show()
+  print("done")
+
   return 0
 
 
 def log_transform(img, c):
+  print("log transformation...", end='', flush=True)
   height, width = (img.shape[0], img.shape[1])
   blank_image = np.zeros((height, width, 1), np.float)
   for row, col in product(range(0, height), range(0, width)):
     blank_image[row, col] = c * math.log10(1 + img[row, col])
 
+  print("done")
 
   return blank_image
 
 
 def powerlaw_transform(img, c, gamma):
+  print("power-law transformation...", end='', flush=True)
   height, width = (img.shape[0], img.shape[1])
   blank_image = np.zeros((height, width, 1), np.float)
 
   for row, col in product(range(0, height), range(0, width)):
     blank_image[row, col] = c * (img[row, col])**gamma
 
+  print("done")
 
   return blank_image
 
 
 def histogram_equalize(img):
+  print("histogram equalization...", end='', flush=True)
   height, width = (img.shape[0], img.shape[1])
   blank_image = np.zeros((height, width, 1), np.float)
   min_val = int(np.amin(img))
@@ -59,11 +66,13 @@ def histogram_equalize(img):
   for row, col in product(range(0, height), range(0, width)):
     blank_image[row, col] = 255 * cdf[ int(img[row, col]) ]
 
+  print("done")
 
   return blank_image
 
 
 def _filter_conv(src, mask):
+  print("\nfilter convolution...")
   border = len(mask) // 2
   src = cv.copyMakeBorder(src, border, border, border, border, cv.BORDER_CONSTANT)
   height, width = (src.shape[0], src.shape[1])
@@ -74,7 +83,9 @@ def _filter_conv(src, mask):
     for i, j in product(range(-1, 2), range(-1, 2)):
       dst[row, col] += mask[i + 1, j + 1] * src[row + i, col + j]
 
+  print("done")
 
+  # remove redundant image border
   return dst[border: -border][:, border: -border]
 
 
