@@ -194,3 +194,30 @@ def normalize(img, method = 0):
 
   return res
 
+
+if __name__ == '__main__':
+  # Load an color image in grayscale
+  # img = cv.imread("images/Fig0343(a)(skeleton_orig).tif", 0)
+  img = cv.imread("images/p2test.tif", 0)
+  # img = cv.imread("images/Fig0342(a)(contact_lens_original).tif", 0)
+
+  # change image data type to float (keep all msg)
+  a = img = img.astype(float)
+  show_and_write(a, "process(a)")
+  b = highboost_filter(a, 3)
+  show_and_write(b, "process(b)")
+  c = laplacian_filter(a)
+  show_and_write(c, "process(c)")
+  c = b + c
+  d = sobel_filter(a)
+  show_and_write(d, "process(d)")
+  e = smooth(d, 3)
+  show_and_write(e, "process(e)")
+  f = c * e
+  f = normalize(f, 1)
+  show_and_write(f, "process(f)", 0)
+  b = normalize(b)
+  g = b + f
+  show_and_write(g, "process(g)")
+  h = log_transform(g, 100)
+  show_and_write(h, "process(h)")
