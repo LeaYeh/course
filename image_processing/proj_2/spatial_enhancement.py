@@ -70,7 +70,6 @@ def histogram_equalize(img):
 
 
 def _filter_conv(src, mask):
-  print("\nfilter convolution...")
   border = len(mask) // 2
   src = cv.copyMakeBorder(src, border, border, border, border, cv.BORDER_CONSTANT)
   height, width = (src.shape[0], src.shape[1])
