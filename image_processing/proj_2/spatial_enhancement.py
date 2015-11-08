@@ -23,84 +23,42 @@ def show_histogram(img):
 
 def log_transform(img, c):
   height, width = (img.shape[0], img.shape[1])
-  blank_image = np.zeros((height, width, 1), np.uint8)
-  tmp_image = np.zeros((height, width))
-  show_histogram(img)
+  blank_image = np.zeros((height, width, 1), np.float)
+  for row, col in product(range(0, height), range(0, width)):
+    blank_image[row, col] = c * math.log10(1 + img[row, col])
 
-  if c == -1:
-    max_val = 0
 
-    for row, col in product(range(0, height), range(0, width)):
-      gray_val = math.log10(1 + img[row, col])
-      if gray_val > max_val:
-        max_val = gray_val
-      tmp_image[row, col] = math.log10(1 + img[row, col])
-
-    for row, col in product(range(0, height), range(0, width)):
-      blank_image[row, col] = tmp_image[row, col] * 255 / max_val
-
-  else:
-    for row, col in product(range(0, height), range(0, width)):
-      blank_image[row, col] = c * math.log10(1 + img[row, col])
-  #blank_image =list(
-  #                  map(
-  #                    lambda x: x * 255 / (max_val - min_val),
-  #                    blank_image.ravel()
-  #                  )
-  #                 ).reshape(height, width)
-  cv.imshow('log res', blank_image)
-  cv.waitKey(0)
-  cv.destroyAllWindows()
   return blank_image
 
 
 def powerlaw_transform(img, c, gamma):
   height, width = (img.shape[0], img.shape[1])
-  blank_image = np.zeros((height, width, 1), np.uint8)
+  blank_image = np.zeros((height, width, 1), np.float)
 
-  if c != -1:
-    for row, col in product(range(0, height), range(0, width)):
-      blank_image[row, col] = c * (img[row, col])**gamma
+  for row, col in product(range(0, height), range(0, width)):
+    blank_image[row, col] = c * (img[row, col])**gamma
 
-  else:
-    max_val = 0
-    tmp_image = np.zeros((height, width))
-
-    for row, col in product(range(0, height), range(0, width)):
-      tmp_image[row, col] = (img[row, col])**gamma
-      if tmp_image[row, col] > max_val:
-        max_val = tmp_image[row, col]
-
-    for row, col in product(range(0, height), range(0, width)):
-      blank_image[row, col] = tmp_image[row, col] * 255 / max_val
-
-  cv.imshow('powerlaw res', blank_image)
-  cv.waitKey(0)
-  cv.destroyAllWindows()
 
   return blank_image
 
 
 def histogram_equalize(img):
   height, width = (img.shape[0], img.shape[1])
-  blank_image = np.zeros((height, width, 1), np.uint8)
-  org_hist = [0] * 256
+  blank_image = np.zeros((height, width, 1), np.float)
+  min_val = int(np.amin(img))
+  max_val = int(np.amax(img))
+  org_hist = [0] * (max_val - min_val + 1)
   n = height * width
 
   for row, col in product(range(0, height), range(0, width)):
-    org_hist[ img[row, col] ] += 1
+    org_hist[ int(img[row, col]) ] += 1
+
   pdf = list(map(lambda x: x / n, org_hist))
   cdf = list(map(lambda x: sum(pdf[:x+1]), range(0, len(pdf))))
 
   for row, col in product(range(0, height), range(0, width)):
-    blank_image[row, col] = 256 * cdf[ img[row, col] ]
+    blank_image[row, col] = 255 * cdf[ int(img[row, col]) ]
 
-  cv.imshow('input img', img)
-  cv.imshow('hist equalize res', blank_image)
-  cv.waitKey(0)
-  cv.destroyAllWindows()
-  show_histogram(img)
-  show_histogram(blank_image)
 
   return blank_image
 
@@ -125,15 +83,29 @@ def _filter_conv(src, mask):
   return dst
 
 
-def laplacian_enhance(img, n = 3):
-  #mask = _get_laplacian_mask(n)
+def laplacian_filter(img, n = 3):
+  print("laplacian enhancement...", end='', flush=True)
+  # create laplacian kernel
+  lap_mask = np.array(
+              ((-1, -1, -1),
+              (-1, 8, -1),
+              (-1, -1, -1))
+             )
+
   return _filter_conv(img, lap_mask)
 
 
 def highboost_filter(img, c, n = 3):
+  print("high-boost...", end='', flush=True)
+  # create high boost kernel
+  lap_mask = np.array(
+              ((-1, -1, -1),
+              (-1, 8, -1),
+              (-1, -1, -1))
+             )
   mask = [0] * (n ** 2)
   mask[(n ** 2) // 2] = 1
-  mask = list(zip(*[iter(mask)] * 3))
+  mask = list(zip(*[iter(mask)] * n))
   mask = np.array(mask)
 
   return _filter_conv(img, mask + lap_mask)
