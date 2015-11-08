@@ -154,10 +154,37 @@ def sobel_filter(img):
   return res
 
 
+def show_and_write(img, name, norm = 1):
+  if norm == 1:
+    img = normalize(img)
+  elif norm == 2:
+    img[img > 255] = 255
+    img[img < 0] = 0
+  # change img type from float to uint8
+  img = img.astype('uint8')
+  cv.imshow(name, img)
+  cv.waitKey(0)
+  cv.destroyAllWindows()
+  cv.imwrite("output/" + name + ".tif", img)
 
-  #log_transform(img, 30)
-  #powerlaw_transform(img, -1, 3)
-  #histogram_equalize(img)
-  #histeq_by_opencv(img)
-  #show_histogram(img)
+  return
+
+
+def normalize(img, method = 0):
+  # rescale min, max grey value to 0 ~ 255
+  if method == 0:
+    max_val = np.amax(img)
+    min_val = np.amin(img)
+    res = (img - min_val) * 255 / (max_val - min_val)
+  # rescale 3% smallest and 3% largest grey value to 0 ~255
+  else:
+    n = img.shape[0] * img.shape[1] // 100 * 3 + 1
+    min_val = img.flat[np.argpartition(img.flat, n-1)[n-1]]
+    tmp = img * -1
+    max_val = -tmp.flat[np.argpartition(tmp.flat, n-1)[n-1]]
+    res = (img - min_val) * 255 / (max_val - min_val)
+    res[res > 255] = 255
+    res[res < 0] = 0
+
+  return res
 
