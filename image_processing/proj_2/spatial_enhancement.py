@@ -109,6 +109,19 @@ def highboost_filter(img, c, n = 3):
 if __name__ == '__main__':
   # Load an color image in grayscale
   img = cv.imread("images/Fig0308(a)(fractured_spine).tif", 0)
+def highboost_filter_pdf(img, k, n = 3):
+  print("high-boost...", end='', flush=True)
+  border = n // 2
+  mask = [1] * (n ** 2)
+  mask = list(zip(*[iter(mask)] * n))
+  mask = np.array(mask)
+  blur_mask = mask / (n ** 2)
+  blur_img = _filter_conv(img, blur_mask).astype(int)
+  gmask = img - blur_img
+  res_img = img + k * gmask
+
+  return res_img
+
 
   #log_transform(img, 30)
   #powerlaw_transform(img, -1, 3)
