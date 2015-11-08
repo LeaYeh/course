@@ -221,3 +221,21 @@ if __name__ == '__main__':
   show_and_write(g, "process(g)")
   h = log_transform(g, 100)
   show_and_write(h, "process(h)")
+  ## skeleton_orig
+  # a = img = img.astype(float)
+  # show_and_write(img, "step(a)", 0)
+  # b = laplacian_filter(img)
+  # show_and_write(b, "step(b)")
+  # c = b + img
+  # show_and_write(c, "step(c)", 2)
+  # d = sobel_filter(img)
+  # show_and_write(d, "step(d)", 2)
+  # e = smooth(d, 3)
+  # show_and_write(e, "step(e)")
+  # f = c * e
+  # show_and_write(f, "step(f)")
+  # f = normalize(f)
+  # g = img + f
+  # show_and_write(g, "step(g)", 2)
+  # h = powerlaw_transform(g, 100, 0.65)
+  # show_and_write(h, "step(h)")
