@@ -1,6 +1,13 @@
 ## Hands-On Exercises ##
 
 ### [4] Use Sniffer or similar software to find out prototype ###
+> TCP, UDP, ICMP protocol base on IP protocol  
+![3.png](images/3.png)  
+![4.png](images/4.png)  
+![5.png](images/5.png)  
+
+> TCP, UDP, ICMP are transport layer  
+> HTTPS is application layer
 
 ### [7] Write one small module. Show what commands are needed to compile and install it ###
 
