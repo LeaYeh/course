@@ -36,6 +36,7 @@
 #include <linux/module.h>
 #include <linux/init.h>
 
+MODULE_LICENSE("MIT");
 static int __init test_module_init(void) {
   printk(KERN_INFO "init a small module.\n");
   return 0;
@@ -93,7 +94,9 @@ test_module.mod.o  test_module.o
 > `rmmod`
 
 > `dmsg`  
-![1.png](images/1.png)
+![1.png](images/1.png)  
+
+> if not add `MODULE_LICENSE()` to specify licence that will get warning msg.  
 
 ## Written Exercises ##
 
