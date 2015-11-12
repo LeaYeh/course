@@ -100,36 +100,53 @@ test_module.mod.o  test_module.o
 
 ## Written Exercises ##
 
-> (2.) Read RFC1071 and RFC1624 to see how IP checksum is computed. Practice with 
+(2.) Read RFC1071 and RFC1624 to see how IP checksum is computed. Practice with 
 the trivial blocks of words by hand.  
-> 0x36f7    0xf670    0x2148   0x8912   0x2345  0x7863  0x0076
-> What if the first word above is changed into 0x36f6?  
-> RFCs downloaded from ftp://ftp.csie.nctu.edu.tw/pub/Documents/RFC/.
+0x36f7    0xf670    0x2148   0x8912   0x2345  0x7863  0x0076  
+What if the first word above is changed into 0x36f6?  
+RFCs downloaded from ftp://ftp.csie.nctu.edu.tw/pub/Documents/RFC/.
 
-> (5.) What are the advantages and disadvantages if we make the minimum Ethernet 
-frame larger?
+-----
 
-> (7.) Should a switch recompute a new FCS of an incoming frame before it is 
+(5.) What are the advantages and disadvantages if we make the minimum Ethernet 
+frame larger?  
+> **[ans]** Ethernet frame is data link layer  
+> advantage: if minimum Ethernet frame too short, the collisions might not be
+> detected by sender. NICs sending data and sniffing media at same time, if it 
+> get different signal when it was sending data that collision was happened.  
+>  
+> disadvantage: if minimum Ethernet frame is too large, overhead of sending a frame 
+> will be too high.
+
+-----
+
+(7.) Should a switch recompute a new FCS of an incoming frame before it is 
 forwarded?
 
-> (13.) Suppose bit stuffing with 0 is used after 5 consecutive 1's. Assuming the 
+-----
+
+(13.) Suppose bit stuffing with 0 is used after 5 consecutive 1's. Assuming the 
 probabilities of 0's and 1's in the bit stream are equal and the occurrences 
 are random, what is the transmission overhead of the bit stuffing scheme? 
 (Hint: Formulate a recursive formula f(n) to find the expected number of 
 overhead bits in an n-bit string first.)
 
-> (15.) In 1000BASE-X, a frame of 64 bytes is first block coded with 8B/10B 
+-----
+
+(15.) In 1000BASE-X, a frame of 64 bytes is first block coded with 8B/10B 
 before transmitting. Suppose the propagation speed is 2x10^8. What is the frame 
 'length' in 'meter' (Suppose the cable is 500 m long.)
 
+-----
 
-> (18.) A CPU executes instructions at 800 MIPS. Data can be copied 64 bits at a 
+(18.) A CPU executes instructions at 800 MIPS. Data can be copied 64 bits at a 
 time, with each 64-bit word copied costing six instructions. If an incoming 
 frame has to be copied twice, how much bit rate, at most, of a line can the 
 system handle? (Assume that all instructions run at the full 800-MIPS rate.)
 
+-----
 
-> (20.) What is the probability that one out of 100 frames of 1000 bytes suffers 
+(20.) What is the probability that one out of 100 frames of 1000 bytes suffers 
 from an error on average if the bit error rate is 10^-8?
 
 
