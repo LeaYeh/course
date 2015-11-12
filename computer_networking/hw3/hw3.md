@@ -106,6 +106,12 @@ the trivial blocks of words by hand.
 What if the first word above is changed into 0x36f6?  
 RFCs downloaded from https://www.ietf.org/rfc.html
 
+> **[ans]**  
+> 1. 0x36f7 + 0xf670 + 0x2148 + 0x8912 + 0x2345 + 0x7863 + 0x0076 = 000273df  
+0002 + 73df = 73e1, 1's Complement -> 0x8C1E  
+> 2. 0x36f6 + 0xf670 + 0x2148 + 0x8912 + 0x2345 + 0x7863 + 0x0076 = 000273de  
+0002 + 73de = 73e0, 1's Complement -> 0x8C1F
+
 -----
 
 (5.) What are the advantages and disadvantages if we make the minimum Ethernet 
@@ -140,6 +146,7 @@ overhead bits in an n-bit string first.)
 
 > **[ans]**  
 > [0.5 * f(n-1) + 0.5^2 * f(n-2) + 0.5^3 * f(n-3) + 0.5^4 * f(n-4) + 0.5^5 * f(n-5) + 0.5^5 * (f(n-6) + 1)]/n
+
 -----
 
 (15.) In 1000BASE-X, a frame of 64 bytes is first block coded with 8B/10B 
@@ -160,10 +167,17 @@ time, with each 64-bit word copied costing six instructions. If an incoming
 frame has to be copied twice, how much bit rate, at most, of a line can the 
 system handle? (Assume that all instructions run at the full 800-MIPS rate.)
 
+> **[ans]**  
+> a frame need: 6 * 2 / (800 * 10^6) sec  
+> 64 / [6 * 2 / (800 * 10^6)] = 4.26667 * 10^9 (bit/sec)
+
 -----
 
 (20.) What is the probability that one out of 100 frames of 1000 bytes suffers 
 from an error on average if the bit error rate is 10^-8?
 
+> **[ans]**  
+> p(no error) = (1 - 10^-8)^(1000 * 8 * 100)
+> at least an error = 1 - p(no error) = 0.007968085242498368
 
 
