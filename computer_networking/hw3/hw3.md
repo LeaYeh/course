@@ -104,12 +104,13 @@ test_module.mod.o  test_module.o
 the trivial blocks of words by hand.  
 0x36f7    0xf670    0x2148   0x8912   0x2345  0x7863  0x0076  
 What if the first word above is changed into 0x36f6?  
-RFCs downloaded from ftp://ftp.csie.nctu.edu.tw/pub/Documents/RFC/.
+RFCs downloaded from https://www.ietf.org/rfc.html
 
 -----
 
 (5.) What are the advantages and disadvantages if we make the minimum Ethernet 
 frame larger?  
+
 > **[ans]** Ethernet frame is data link layer  
 > advantage: if minimum Ethernet frame too short, the collisions might not be
 > detected by sender. NICs sending data and sniffing media at same time, if it 
@@ -123,6 +124,12 @@ frame larger?
 (7.) Should a switch recompute a new FCS of an incoming frame before it is 
 forwarded?
 
+> **[ans]**  
+> this idea is bad, because  
+> 1. it will increase redundant time cost.  
+> 2. if swicth detected and claimed this frame is correct, then ruined it internal 
+> switch, after forwarding next node would never know this frame is incorrect.
+
 -----
 
 (13.) Suppose bit stuffing with 0 is used after 5 consecutive 1's. Assuming the 
@@ -131,11 +138,20 @@ are random, what is the transmission overhead of the bit stuffing scheme?
 (Hint: Formulate a recursive formula f(n) to find the expected number of 
 overhead bits in an n-bit string first.)
 
+> **[ans]**  
+> [0.5 * f(n-1) + 0.5^2 * f(n-2) + 0.5^3 * f(n-3) + 0.5^4 * f(n-4) + 0.5^5 * f(n-5) + 0.5^5 * (f(n-6) + 1)]/n
 -----
 
 (15.) In 1000BASE-X, a frame of 64 bytes is first block coded with 8B/10B 
 before transmitting. Suppose the propagation speed is 2x10^8. What is the frame 
 'length' in 'meter' (Suppose the cable is 500 m long.)
+
+> **[ans]**  
+> a frame = 64(byte) * 8 = 512 bit  
+> a frame encode with 8B/10B = 512 / 8 * 10 = 640 bit  
+> in 1000BASE-X bandwidth(bit rate) = 1 gig bit = 10^9 bit/s  
+> trans 1 bit need = 1 / 10^9 s/bit  
+> 640 / 10^9(s) * 2 * 10^8(m/s) = 128m  
 
 -----
 
