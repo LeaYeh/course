@@ -52,7 +52,7 @@ def histogram_equalize(img):
   blank_image = np.zeros((height, width, 1), np.float)
   min_val = int(np.amin(img))
   max_val = int(np.amax(img))
-  org_hist = [0] * (max_val - min_val + 1)
+  org_hist = [0] * 256
   n = height * width
 
   for row, col in product(range(0, height), range(0, width)):
