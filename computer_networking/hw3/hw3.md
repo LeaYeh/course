@@ -180,4 +180,11 @@ from an error on average if the bit error rate is 10^-8?
 > p(no error) = (1 - 10^-8)^(1000 * 8 * 100)
 > at least an error = 1 - p(no error) = 0.007968085242498368
 
+(others)  
+What is the maximum number of frames a switch of 16 Fast Ethernet (100 Mb/s) 
+ports may deal with if each port operates in full-duplex mode?  
+**[ans]**  
+> Fast Ethernet has a interframe gap (IFG): to prepare for anothor package,
+in Fast Ethernet it is 12 byte
+> 100 * 10^6 * 16 / (64 * 8 + 96 + 8 * 8) = 2380952 (frames)
 
