@@ -9,6 +9,11 @@ import matplotlib.pyplot as plt
 from dependence.spatial_enhancement import show_histogram, histogram_equalize
 
 
+# implement DFT
+def dft():
+  return 0
+
+
 # Fast Fourier Transform
 def fft():
   return 0
