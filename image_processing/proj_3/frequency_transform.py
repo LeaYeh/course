@@ -10,7 +10,7 @@ from dependence.spatial_enhancement import show_histogram, histogram_equalize
 
 
 # Fast Fourier Transform
-def FFT():
+def fft():
   return 0
 
 
