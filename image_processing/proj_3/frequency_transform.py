@@ -39,8 +39,16 @@ def _padding(img):
 
 
 # implement DFT
-def dft():
-  return 0
+def dft(img):
+  height, width = img.shape[0], img.shape[1]
+  f = img
+  F = np.zeros((height, width, 1), np.float)
+
+  for u, v in product(range(0, height), range(0, width)):
+    for x, y in product(range(0, height), range(0, width)):
+      F[u, v] = f[x, y] * e ** (2 * pi * (u * x / height + v * y / width)) * (-1) ** (x + y)
+
+  return blank_image
 
 
 # Fast Fourier Transform
