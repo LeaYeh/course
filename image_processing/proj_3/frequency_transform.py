@@ -1,12 +1,14 @@
-import cv2 as cv
-import numpy as np
-import math
-import sys
-from itertools import product
-import matplotlib
-matplotlib.use("Qt4Agg")
-import matplotlib.pyplot as plt
-from dependence.spatial_enhancement import show_histogram, histogram_equalize
+from math import e
+from math import pi
+import dependence.spatial_enhancement as dev
+from dependence.spatial_enhancement import cv
+from dependence.spatial_enhancement import math
+from dependence.spatial_enhancement import plt
+from dependence.spatial_enhancement import np
+from dependence.spatial_enhancement import matplotlib
+from dependence.spatial_enhancement import product
+
+
 
 
 # implement DFT
