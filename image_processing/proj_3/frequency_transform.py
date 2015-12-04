@@ -15,13 +15,16 @@ def _is_power_2(num):
 
 # calc highest bit position then complete to power of 2
 def _complete_to_power_2(num):
-  return 2 ** (int(math.log(num, 2)) + 1)
+  num = math.log(num, 2)
+  hb = num if type(num) == int else int(num) + 1
+
+  return 2 ** hb
 
 
 # let image be power of 2
 def _padding(img):
   height, width = img.shape[0], img.shape[1]
-  new_height, new_width = 0, 0
+  new_height, new_width = height, width
 
   if not _is_power_2(height):
     new_height = _complete_to_power_2(height)
