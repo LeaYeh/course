@@ -1,10 +1,12 @@
 from math import e
 from math import pi
 import dependence.spatial_enhancement as dev
+import time
 from dependence.spatial_enhancement import cv
 from dependence.spatial_enhancement import math
 from dependence.spatial_enhancement import plt
 from dependence.spatial_enhancement import np
+np.set_printoptions(threshold=np.nan)
 from dependence.spatial_enhancement import matplotlib
 from dependence.spatial_enhancement import product
 
