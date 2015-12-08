@@ -167,8 +167,15 @@ def fft2(img):
 
 
 # High-Frequency-Emphasis Filtering
-def hightpass_filter():
-  return 0
+def high_frequency_emphasis(shape, D0, k1, k2):
+  height, width = shape
+  H = np.zeros((height, width), np.float)
+
+  for u, v in product(range(0, height), range(0, width)):
+    Duv = ((u - height / 2) ** 2 + (v - width / 2) ** 2) ** 0.5
+    H[u, v] = k1 + k2 * (1 - e ** (-1 * Duv ** 2 / (2 * D0 ** 2)))
+
+  return H
 
 
 # Butterworth band reject filter
