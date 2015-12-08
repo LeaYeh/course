@@ -10,6 +10,7 @@ np.set_printoptions(threshold=np.nan)
 from dependence.spatial_enhancement import matplotlib
 from dependence.spatial_enhancement import product
 
+import pdb
 
 # check if a number is a power of two
 def _is_power_2(num):
