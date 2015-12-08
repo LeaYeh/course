@@ -138,6 +138,10 @@ def write_image_value(img):
     f.write(str(img))
 
 
+def center_transform(img):
+  return img * np.fromfunction(lambda x, y: (-1) ** (x + y), img.shape, dtype=float)
+
+
 if __name__ == '__main__':
 
 
