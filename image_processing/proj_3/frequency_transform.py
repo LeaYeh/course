@@ -18,7 +18,7 @@ def _is_power_2(num):
 
 # calc highest bit position then complete to power of 2
 def _complete_to_power_2(num):
-  num = math.log(num, 2)
+  num = math.log2(num)
   hb = num if type(num) == int else int(num) + 1
 
   return 2 ** hb
