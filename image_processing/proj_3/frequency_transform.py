@@ -172,8 +172,16 @@ def hightpass_filter():
 
 
 # Butterworth band reject filter
-def butterworth_filter():
-  return 0
+def butterworth_filter(shape, D0, n):
+  height, width = shape
+  A = 2 ** 0.5 - 1
+  H = np.zeros((height, width), np.float)
+
+  for u, v in product(range(0, height), range(0, width)):
+    Duv = ((u - height / 2) ** 2 + (v - width / 2) ** 2) ** 0.5
+    H[u, v] = 1 / (1 + A * (Duv / D0) ** (2 * n))
+
+  return H
 
 def write_image_value(img):
   with open("output/img_value", "w") as f:
