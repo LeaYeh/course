@@ -16,6 +16,8 @@ import pdb
 def _is_power_2(num):
   return ( num != 0 and ((num & (num - 1)) == 0))
 
+
+
 # calc highest bit position then complete to power of 2
 def _complete_to_power_2(num):
   num = math.log2(num)
@@ -52,9 +54,11 @@ def dft(img):
 
   for u, v in product(range(0, height), range(0, width)):
     for x, y in product(range(0, height), range(0, width)):
-      F[u, v] = f[x, y] * e ** (2 * pi * (u * x / height + v * y / width)) * (-1) ** (x + y)
+      F[u, v] += f[x, y] * e ** (2 * pi * (u * x / height + v * y / width)) * (-1) ** (x + y)
 
-  return blank_image
+  return F
+
+
 
 
 # Fast Fourier Transform
