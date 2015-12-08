@@ -59,6 +59,28 @@ def dft(img):
   return F
 
 
+def _bit_swap(x, i, j):
+  ib = (x >> i) & 1
+  jb = (x >> j) & 1
+  if (ib ^ jb):
+    x ^= ((1 << i) | (1 << j))
+
+  return x
+
+
+def _bit_reverse(x, hb):
+  for i in range(0, math.ceil(hb / 2)):
+    x = _bit_swap(x, i, hb - i - 1)
+
+  return x
+
+
+def _get_period_order(m):
+  return list(map(lambda x: _bit_reverse(x, int(math.log2(m))), range(0, m)))
+
+
+def _sort(data, order):
+  return list(map(lambda x: data[ order[x] ], range(0, len(data))))
 
 
 # Fast Fourier Transform
