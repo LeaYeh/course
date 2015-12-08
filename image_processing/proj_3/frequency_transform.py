@@ -142,6 +142,10 @@ def center_transform(img):
   return img * np.fromfunction(lambda x, y: (-1) ** (x + y), img.shape, dtype=float)
 
 
+def get_spectrum(feq_img):
+  return np.absolute(feq_img)
+
+
 if __name__ == '__main__':
 
 
