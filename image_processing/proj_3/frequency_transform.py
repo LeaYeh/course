@@ -133,6 +133,9 @@ def hightpass_filter():
 def butterworth_filter():
   return 0
 
+def write_image_value(img):
+  with open("output/img_value", "w") as f:
+    f.write(str(img))
 
 
 if __name__ == '__main__':
