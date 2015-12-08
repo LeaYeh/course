@@ -9,7 +9,7 @@ from dependence.spatial_enhancement import np
 np.set_printoptions(threshold=np.nan)
 from dependence.spatial_enhancement import matplotlib
 from dependence.spatial_enhancement import product
-
+from functools import lru_cache
 import pdb
 
 # check if a number is a power of two
@@ -96,12 +96,54 @@ def _raw_fft(data):
   return F
 
 
+@lru_cache(maxsize=None)
+def _raw_fft(data, flag):
+  M = len(data)
+  Wm = e ** (-1j * 2 * pi / M) if flag == 0 else np.conjugate(e ** (-1j * 2 * pi / M))
+  F = [None] * M
+  k = M // 2
+
+  if M == 2:
+    F[0] = data[0] + data[1]
+    F[1] = data[0] - data[1]
+    return F
+
+  Feven = _raw_fft(data[0: k], flag)
+  Fodd  = _raw_fft(data[k: ], flag)
+
+  for u in range(0, k):
+    F[u]     = Feven[u] + Fodd[u] * Wm ** u
+    F[u + k] = Feven[u] - Fodd[u] * Wm ** u
+
+  return F
+
+
 def _get_period_order(m):
   return list(map(lambda x: _bit_reverse(x, int(math.log2(m))), range(0, m)))
 
 
 def _sort(data, order):
   return list(map(lambda x: data[ order[x] ], range(0, len(data))))
+
+
+# Inverse Fast Fourier Transform
+def ifft2(img):
+  # img = _padding(img)
+
+  # could it do with fourlier transform?
+  # img = center_transform(img)
+  height, width = img.shape[0], img.shape[1]
+  feq_img = np.zeros((height, width), np.complex)
+
+  for i in range(0, height):
+    row_data = _sort(img[i], _get_period_order(width))
+    feq_img[i, :] = _raw_fft(tuple(row_data), -1)
+
+  for j in range(0, width):
+    col_data = _sort(feq_img[:, j], _get_period_order(height))
+    feq_img[:, j] = _raw_fft(tuple(col_data), -1)
+
+  return feq_img
 
 
 # Fast Fourier Transform
@@ -115,11 +157,11 @@ def fft2(img):
 
   for i in range(0, height):
     row_data = _sort(img[i], _get_period_order(width))
-    feq_img[i, :] = _raw_fft(row_data)
+    feq_img[i, :] = _raw_fft(tuple(row_data), 0)
 
   for j in range(0, width):
     col_data = _sort(feq_img[:, j], _get_period_order(height))
-    feq_img[:, j] = _raw_fft(col_data)
+    feq_img[:, j] = _raw_fft(tuple(col_data), 0)
 
   return feq_img
 
