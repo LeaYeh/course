@@ -215,4 +215,20 @@ if __name__ == '__main__':
   # log_img = np.log10(1 + np.abs(feq_img))
   # dev.show_and_write(log_img, "log transformation")
 
+  ## Problem b
+  # img = cv.imread("images/Fig0459(a)(orig_chest_xray).tif", 0)
+  # img = img.astype(float)
+  # origin_shape = img.shape
+  # img = _padding(img)
+  # img = center_transform(img)
+  # feq_img = fft2(img)
+  # HFE = high_frequency_emphasis(img.shape, 120, 0.5, 0.7)
+  # filtered_img = feq_img * HFE
+  # time_img = ifft2(filtered_img).real
+  # time_img = center_transform(time_img)
+  # time_img = time_img[:origin_shape[0], :origin_shape[1]]
+  # time_img = dev.normalize(time_img)
+  # dev.show_and_write(time_img, "after high-feqency-emphasis filtering", 0)
+  # time_img_equ = dev.histogram_equalize(time_img)
+  # dev.show_and_write(time_img_equ, "after histogram equalize")
 
