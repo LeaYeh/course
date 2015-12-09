@@ -204,5 +204,15 @@ def get_spectrum(feq_img):
 
 
 if __name__ == '__main__':
+  ## Problem a
+  # img = cv.imread("images/Fig0424(a)(rectangle).tif", 0)
+  # img = img.astype(float)
+  # img = _padding(img)
+  # img = center_transform(img)
+  # feq_img = fft2(img)
+  # center_spectrum = get_spectrum(feq_img)
+  # dev.show_and_write(center_spectrum, "center_spectrum")
+  # log_img = np.log10(1 + np.abs(feq_img))
+  # dev.show_and_write(log_img, "log transformation")
 
 
