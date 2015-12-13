@@ -180,10 +180,55 @@ ask router's MAC address.
 -----
 
 (30) Consider the following network topology. Show how node A constructs its
-routing table using Link-State routing and Distance Vector routing, respectively.
+routing table using Link-State routing and Distance Vector routing, respectively.  
+![30](images/30.png)  
 
 **[ans]**  
-> 
+
+by **Link-State routing**,  
+
+| Iteration | least-cost path | C(B),p(B) | C(C),p(C)| C(D),p(D) | C(E),p(E) | C(F),p(F) |
+|:---------:|-----------------|-----------|----------|-----------|-----------|-----------|
+|0          | A               | 1, A      | 6, A     | 1, A      | INF       | INF       |
+|1          | AB              |           | 4, B     | 1, A      | INF       | INF       |
+|2          | ABD             |           | 4, B     |           | 11, A     | INF       |
+|3          | ABDC            |           |          |           | 8, C      | INF       |
+|4          | ABDCE           |           |          |           |           | 10, E     |
+|5          | ABDCEF          |           |          |           |           |           |
+
+by **Distance Vector routing**,  
+
+| Destination | Cost | Next Hop |
+|:-----------:|------|----------|
+|      B      |  1   |     B    |
+|      C      |  6   |     C    |
+|      D      |  1   |     D    |
+|      E      |      |          |
+|      F      |      |          |
+
+| Destination | Cost | Next Hop |
+|:-----------:|------|----------|
+|      B      |  1   |     B    |
+|      C      |  4   |     B    |
+|      D      |  1   |     D    |
+|      E      |  10  |     C    |
+|      F      |      |          |
+
+| Destination | Cost | Next Hop |
+|:-----------:|------|----------|
+|      B      |  1   |     B    |
+|      C      |  4   |     B    |
+|      D      |  1   |     D    |
+|      E      |  8   |     B    |
+|      F      |  12  |     C    |
+
+| Destination | Cost | Next Hop |
+|:-----------:|------|----------|
+|      B      |  1   |     B    |
+|      C      |  4   |     B    |
+|      D      |  1   |     D    |
+|      E      |  8   |     B    |
+|      F      |  10  |     B    |
 
 
 -----
@@ -202,8 +247,10 @@ algorithm.
 
 -----
 
-(50) Show the multicast tree built by DVMRP in the following network topology.
+(50) Show the multicast tree built by DVMRP in the following network topology.  
+**[ans]**
 
+![50 pic](images/50.png)
 
 ## Note ##
 
