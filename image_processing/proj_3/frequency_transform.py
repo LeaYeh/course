@@ -1,6 +1,7 @@
 from math import e
 from math import pi
 import dependence.spatial_enhancement as dev
+import dependence.debug_log as debug
 import time
 from dependence.spatial_enhancement import cv
 from dependence.spatial_enhancement import math
@@ -48,6 +49,7 @@ def _padding(img):
 
 
 # implement DFT
+@debug.log_msg
 def dft(img):
   height, width = img.shape[0], img.shape[1]
   f = img
@@ -107,6 +109,7 @@ def _sort(data, order):
 
 
 # Inverse Fast Fourier Transform
+@debug.log_msg
 def ifft2(img):
   height, width = img.shape[0], img.shape[1]
   feq_img = np.zeros((height, width), np.complex)
@@ -123,6 +126,7 @@ def ifft2(img):
 
 
 # Fast Fourier Transform
+@debug.log_msg
 def fft2(img):
   height, width = img.shape[0], img.shape[1]
   feq_img = np.zeros((height, width), np.complex)
@@ -139,6 +143,7 @@ def fft2(img):
 
 
 # High-Frequency-Emphasis Filtering
+@debug.log_msg
 def high_frequency_emphasis(shape, D0, k1, k2):
   height, width = shape
   H = np.zeros((height, width), np.float)
@@ -151,6 +156,7 @@ def high_frequency_emphasis(shape, D0, k1, k2):
 
 
 # Butterworth band reject filter
+@debug.log_msg
 def butterworth_filter(shape, D0, n):
   height, width = shape
   A = 2 ** 0.5 - 1
@@ -162,15 +168,18 @@ def butterworth_filter(shape, D0, n):
 
   return H
 
+@debug.log_msg
 def write_image_value(img):
   with open("output/img_value", "w") as f:
     f.write(str(img))
 
 
+@debug.log_msg
 def center_transform(img):
   return img * np.fromfunction(lambda x, y: (-1) ** (x + y), img.shape, dtype=float)
 
 
+@debug.log_msg
 def get_spectrum(feq_img):
   return np.absolute(feq_img)
 
