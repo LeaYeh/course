@@ -162,7 +162,19 @@ when X sends an IP packet to a host that is outside the domain. (Hint: do
 not forget to explain how does X know of the router R.)
 
 **[ans]**  
+> 1. checks whether X and Y are in the same subnet, first time X sand an ARP 
+reqest to ask Y's MAC address by boardcast.  
+And switch S will record the mapping port number of X at same time.  
+Y gets X's MAC address from ARP, then directly respond an ARP to X.  
+Because S is already have X's port info, forward the packet to X directly.  
 
+> 2. Because Y already has X’s MAC address it can send the packet to X directly.
+(no need to routing)  
+
+> 3. X will search its routing table to find the next hop router, then send an 
+ARP request to ask router's MAC address(... same as Q1)  
+But switch S does not know router, so it will also boardcast an ARP request to 
+ask router's MAC address.
 
 
 -----
