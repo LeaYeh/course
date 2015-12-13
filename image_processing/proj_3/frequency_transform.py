@@ -10,12 +10,13 @@ np.set_printoptions(threshold=np.nan)
 from dependence.spatial_enhancement import matplotlib
 from dependence.spatial_enhancement import product
 from functools import lru_cache
+from scipy import ndimage
 import pdb
+
 
 # check if a number is a power of two
 def _is_power_2(num):
   return ( num != 0 and ((num & (num - 1)) == 0))
-
 
 
 # calc highest bit position then complete to power of 2
@@ -75,27 +76,6 @@ def _bit_reverse(x, hb):
   return x
 
 
-def _raw_fft(data):
-  M = len(data)
-  Wm = e ** (-1j * 2 * pi / M)
-  F = [None] * M
-  k = M // 2
-
-  if M == 2:
-    F[0] = data[0] + data[1]
-    F[1] = data[0] - data[1]
-    return F
-
-  Feven = _raw_fft(data[0: k])
-  Fodd  = _raw_fft(data[k: ])
-
-  for u in range(0, k):
-    F[u]     = Feven[u] + Fodd[u] * Wm ** u
-    F[u + k] = Feven[u] - Fodd[u] * Wm ** u
-
-  return F
-
-
 @lru_cache(maxsize=None)
 def _raw_fft(data, flag):
   M = len(data)
@@ -128,10 +108,6 @@ def _sort(data, order):
 
 # Inverse Fast Fourier Transform
 def ifft2(img):
-  # img = _padding(img)
-
-  # could it do with fourlier transform?
-  # img = center_transform(img)
   height, width = img.shape[0], img.shape[1]
   feq_img = np.zeros((height, width), np.complex)
 
@@ -148,10 +124,6 @@ def ifft2(img):
 
 # Fast Fourier Transform
 def fft2(img):
-  # img = _padding(img)
-
-  # could it do with fourlier transform?
-  # img = center_transform(img)
   height, width = img.shape[0], img.shape[1]
   feq_img = np.zeros((height, width), np.complex)
 
@@ -204,28 +176,38 @@ def get_spectrum(feq_img):
 
 
 if __name__ == '__main__':
-  ## Problem a
+  # Problem a
+  # # load image and change array type to float #
   # img = cv.imread("images/Fig0424(a)(rectangle).tif", 0)
   # img = img.astype(float)
+  # # padding image shape to power of 2 #
   # img = _padding(img)
+  # # shift image to origin point (let DC fequency centered) #
   # img = center_transform(img)
   # feq_img = fft2(img)
+  # # get specturm by image and real #
   # center_spectrum = get_spectrum(feq_img)
   # dev.show_and_write(center_spectrum, "center_spectrum")
   # log_img = np.log10(1 + np.abs(feq_img))
   # dev.show_and_write(log_img, "log transformation")
 
-  ## Problem b
+  # ## Problem b
+  # # load image and change array type to float #
   # img = cv.imread("images/Fig0459(a)(orig_chest_xray).tif", 0)
   # img = img.astype(float)
   # origin_shape = img.shape
+  # # padding image shape to power of 2 #
   # img = _padding(img)
+  # # shift image to origin point (let DC fequency centered) #
   # img = center_transform(img)
   # feq_img = fft2(img)
   # HFE = high_frequency_emphasis(img.shape, 120, 0.5, 0.7)
+  # # multiply mask to filter out high frequency part #
   # filtered_img = feq_img * HFE
   # time_img = ifft2(filtered_img).real
+  # # re-shift image to origin image #
   # time_img = center_transform(time_img)
+  # # slice array to cut redundant padding image #
   # time_img = time_img[:origin_shape[0], :origin_shape[1]]
   # time_img = dev.normalize(time_img)
   # dev.show_and_write(time_img, "after high-feqency-emphasis filtering", 0)
