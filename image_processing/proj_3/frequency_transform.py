@@ -232,3 +232,34 @@ if __name__ == '__main__':
   # time_img_equ = dev.histogram_equalize(time_img)
   # dev.show_and_write(time_img_equ, "after histogram equalize")
 
+  ## Problem c
+  # load image and change array type to float #
+  # orig_img = img = cv.imread("images/Fig0516(a)(applo17_boulder_noisy).tif", 0)
+  # BPF = cv.imread("images/Fig0516(c)(BW_banreject_order4).tif", 0)
+  # img = img.astype(float)
+  # mask_shape = BPF.shape
+  # origin_shape = img.shape
+  # # padding image shape to power of 2 #
+  # img = _padding(img)
+  # feq_shape = img.shape
+  # # shift image to origin point (let DC fequency centered) #
+  # img = center_transform(img)
+  # feq_img = fft2(img)
+  # # scale mask to fit padding image
+  # BPF_zoom = ndimage.zoom(
+  #         BPF,
+  #         (
+  #           feq_shape[0] / mask_shape[0],
+  #           feq_shape[1] / mask_shape[1]
+  #         ),
+  #         order=0
+  #       )
+  #
+  # filtered_img = feq_img * BPF_zoom
+  # time_img = ifft2(filtered_img).real
+  # time_img = center_transform(time_img)
+  # time_img = time_img[:origin_shape[0], :origin_shape[1]]
+  # time_img = dev.normalize(time_img)
+  #
+  # dev.show_and_write(orig_img, "origin image", 0)
+  # dev.show_and_write(time_img, "after band pass filtering", 0)
