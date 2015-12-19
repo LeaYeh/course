@@ -24,8 +24,23 @@ what will the smoothed RTT and the RTO evolve when the receiver gets farer and
 then nearer? Assume the moving speed is very fast such that the propagation delay 
 ranges from 100 ms to 300 ms within 1 second.  
 
------
+**[ans]**  
 
+```
+R': a new RTT
+SRRT: smoothed round-trip time
+RTTVAR: round-trip time variation
+alpha = 0.125
+beta = 0.25
+
+RTTVAR <- (1 - beta) * RTTVAR + beta * |SRTT - R'|
+SRTT <- (1 - alpha) * SRTT + alpha * R'
+RTO <- SRTT + max (G, K*RTTVAR)
+```
+The difference(RTTVAR) between SRTT and R' will increase,  
+so RTO will increase too
+
+-----
 (6) Given that the throughput of a TCP connection is inversely proportional to 
 its RTT, connections with heterogeneous RTTs sharing the same queue will get 
 different bandwidth shares. What will be the eventual proportion of the bandwidth 
@@ -45,7 +60,7 @@ RTT estimate?
 (13) Suppose you are going to design a real-time streaming application over the 
 Internet that employs RTP on top of TCP instead of UDP, what situations will the 
 sender and the receiver encounter in each TCP congestion control state shown in 
-Figure 4.9? Compare your expected situations with those designed on top of UDP 
+Figure 5.21? Compare your expected situations with those designed on top of UDP 
 in a table format.  
 
 -----
