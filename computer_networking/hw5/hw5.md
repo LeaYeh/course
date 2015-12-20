@@ -1,3 +1,4 @@
+homework: https://github.com/LeaYeh/course/blob/master/computer_networking/hw5/hw5.md
 ## Hands-On Exercises ##
 (1) NS-2 is the most popular simulator for TCP research. It includes a package 
 called NAM that can visually replay the whole simulation at all timescales. Many 
