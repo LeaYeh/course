@@ -259,5 +259,5 @@ record many network segment and each mapped to a dist.
 * record MAC(dist's) and mapping port(switch's) in FIB table.  
 ![fib](images/fib.png)
 
-
+**(OSFP)[http://www.netadmin.com.tw/article_content.aspx?sn=1304170001&jump=1]**  
 
