@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import dependence.debug_log as debug
 from dependence.spatial_enhancement import show_and_write
 
+import pywt
+
 # Haar convolusion mask
 h0 = (0.7071067811865475, 0.7071067811865475)
 h1 = (0.7071067811865475, -0.7071067811865475)
@@ -29,10 +31,8 @@ def _down_sampling(img, RoC):
   height, width = img.shape[0], img.shape[1]
 
   if RoC == 0:
-    blank_img = np.zeros((height // 2, width), np.float)
-    blank_img = img[::2]
+    blank_img = img[::2, ::]
   else:
-    blank_img = np.zeros((height, width // 2), np.float)
     blank_img = img[::, ::2]
 
   return blank_img
@@ -43,10 +43,14 @@ def _convolusion(img, mask, RoC):
   blank_img = np.zeros((height, width), np.float)
 
   if RoC == 0:
-    for row, col in product(range(0, height), range(0, width - 1)):
+    # img = np.insert(img, img.shape[1], img[:, -1], axis=1)
+    img = np.insert(img, img.shape[1], 0, axis=1)
+    for row, col in product(range(0, height), range(0, width)):
       blank_img[row, col] = img[row, col] * mask[0] + img[row, col + 1] * mask[1]
   else:
-    for row, col in product(range(0, height - 1), range(0, width)):
+    # img = np.insert(img, img.shape[0], img[-1, :], axis=0)
+    img = np.insert(img, img.shape[0], 0, axis=0)
+    for row, col in product(range(0, height), range(0, width)):
       blank_img[row, col] = img[row, col] * mask[0] + img[row + 1, col] * mask[1]
 
   return blank_img
@@ -85,48 +89,140 @@ def dwt(img, level=1):
 def idwt(img, level):
   height, width = img.shape[0], img.shape[1]
 
-  for lev in range(level, 0, -1):
-    resize = 2 ** (lev - 1)
-    fheight, fwidth = img.shape[0] // resize, img.shape[1] // resize
-    fetch_img = img[:fheight, :fwidth]
+  fetch_img = img
+  fheight, fwidth = fetch_img.shape[0], fetch_img.shape[1]
 
-    a = fetch_img[:fheight//2, :fwidth//2]
-    dV = fetch_img[:fheight//2, fwidth//2:None]
-    dH = fetch_img[fheight//2:None, :fwidth//2]
-    dD = fetch_img[fheight//2:None, fwidth//2:None]
+  a  = fetch_img[     :fheight//2,     :fwidth//2 ]
+  dV = fetch_img[     :fheight//2, fwidth//2:None ]
+  dH = fetch_img[ fheight//2:None,     :fwidth//2 ]
+  dD = fetch_img[ fheight//2:None, fwidth//2:None ]
 
-    a = _up_sampling(a, 1)
-    dV = _up_sampling(dV, 1)
-    dH = _up_sampling(dH, 1)
-    dD = _up_sampling(dD, 1)
-    low_a = _convolusion(a, h0, 0)
-    high_dV = _convolusion(dV, h1, 0)
-    low_dH = _convolusion(dH, h0, 0)
-    high_dD = _convolusion(dD, h1, 0)
-    f1 = low_a + high_dV
-    f2 = low_dH + high_dD
+  a  = _up_sampling( a, 1)
+  dV = _up_sampling(dV, 1)
+  dH = _up_sampling(dH, 1)
+  dD = _up_sampling(dD, 1)
 
-    f1 = _up_sampling(f1, 0)
-    f2 = _up_sampling(f2, 0)
-    low_f1 = _convolusion(f1, h0, 1)
-    high_f2 = _convolusion(f2, h1, 1)
-    img[:fheight, :fwidth] = low_f1 + high_f2
+  a  = _convolusion( a, h0, 0)
+  dV = _convolusion(dV, h0, 0)
+  dH = _convolusion(dH, h1, 0)
+  dD = _convolusion(dD, h1, 0)
+
+  f1 = a + dH
+  f2 = dV + dD
+
+  f1 = _up_sampling(f1, 0)
+  f2 = _up_sampling(f2, 0)
+  f1 = _convolusion(f1, h0, 1)
+  f2 = _convolusion(f2, h1, 1)
+  img[:fheight, :fwidth] = f1 + f2
+
+  # for lev in range(level, 0, -1):
+  #   resize = 2 ** (lev - 1)
+  #   fheight, fwidth = img.shape[0] // resize, img.shape[1] // resize
+  #   fetch_img = img[:fheight, :fwidth]
+  #
+  #   a = fetch_img[:fheight//2, :fwidth//2]
+  #   dV = fetch_img[:fheight//2, fwidth//2:None]
+  #   dH = fetch_img[fheight//2:None, :fwidth//2]
+  #   dD = fetch_img[fheight//2:None, fwidth//2:None]
+  #
+  #   a = _up_sampling(a, 1)
+  #   dV = _up_sampling(dV, 1)
+  #   dH = _up_sampling(dH, 1)
+  #   dD = _up_sampling(dD, 1)
+  #
+  #   a = _convolusion(a, h0, 0)
+  #   dH = _convolusion(dH, h1, 0)
+  #   dV = _convolusion(dV, h0, 0)
+  #   dD = _convolusion(dD, h1, 0)
+  #
+  #   f1 = a + dH
+  #   f2 = dV + dD
+  #
+  #   f1 = _up_sampling(f1, 0)
+  #   f2 = _up_sampling(f2, 0)
+  #   f1 = _convolusion(f1, h0, 1)
+  #   f2 = _convolusion(f2, h1, 1)
+  #   img[:fheight, :fwidth] = f1 + f2
 
   return img
+
+
+
 
 
 if __name__ == '__main__':
   img = cv.imread("images/Fig0809(a).tif", 0)
   img = img.astype(float)
- 
-  # img = dwt(img, 5)
+
+  a = np.arange(4 * 4)
+  a = a.reshape((4, 4))
+
+
+  # img = dwt(img)
+  # img = idwt(img, 1)
   # show_and_write(img, "img")
+
+  # print(a)
+  # print(_convolusion(a, h0, 1))
+
+  my = dwt(img)
+  show_and_write(my, "my")
+  h, w = my.shape[0], my.shape[1]
+  aa = my[:h//2, :w//2]
+  dv = my[:h//2, w//2:None]
+  dh = my[h//2:None, :w//2]
+  dd = my[h//2:None, w//2:None]
+  i = [aa, [dh, dv, dd]]
+
+  show_and_write(pywt.idwt2(i, "haar"), "my dwt, py idwt")
+  show_and_write(idwt(my, 1), "my dwt, my idwt")
+
+  # print(i)
+  # print(j)
+  # print(a)
+
+  # b = _convolusion(a, h0, 1)
+  # c = _down_sampling(b, 0)
+  # print(b)
+  # print(c)
+  # c = _up_sampling(c, 0)
+  # print(c)
+  # c = _convolusion(c, h0, 1)
+  # print(c)
+  
+  # img = dwt(img)
+  # img = idwt(img, level=1)
+  # show_and_write(img, "my")
+
+  # res = pywt.wavedec2(img, 'haar', level=1)
+  # show_and_write(res[1][0], "res")
+
+  # coeffs = list(pywt.dwt2(img, 'haar'))
+  # aa = np.append(coeffs[0], coeffs[1][0], axis=1)
+  # bb = np.append(coeffs[1][1], coeffs[1][2], axis=1)
+  # out = np.append(aa, bb, axis=0)
+  # show_and_write(out, "out")
+  #
+  # img = dwt(img, 1)
+  # show_and_write(img, "img")
+
+  # r1 = idwt(out, 1)
+  # r2 = idwt(img, 1)
+  #
+  # py_res = pywt.idwt2(coeffs, 'haar')
+  # show_and_write(py_res, "py_res")
+
+  # diff = img - out
+  # show_and_write(diff, "diff")
+
   # a = np.arange(8 * 8)
   # a = a.reshape((8, 8))
-  img = dwt(img, 1)
-  show_and_write(img, "dwt")
-  img = idwt(img, 1)
-  show_and_write(img, "idwt")
+  # img = dwt(img, 1)
+  # show_and_write(img, "dwt")
+  # img = idwt(img, 1)
+  # show_and_write(img, "idwt")
+
   # nimg = _convolusion(img, h0, 0)
   # nimg = down_sampling(nimg, 0)
   # mimg = _convolusion(img, h1, 0)
