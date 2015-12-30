@@ -7,10 +7,19 @@ matplotlib.use("Qt4Agg")
 import matplotlib.pyplot as plt
 import dependence.debug_log as debug
 from dependence.spatial_enhancement import show_and_write
-
 import pywt
 
 coef = 0.5
+
+
+def read_from_text(name):
+  return np.loadtxt("image_text/" + name, delimiter=',')
+
+
+def write_to_text(img, name):
+  np.savetxt("image_text/" + name + '.txt', img, fmt='%7.2f', delimiter=',')
+  return 0
+
 
 def formulas_idwt(img, level=1):
   height, width = img.shape
