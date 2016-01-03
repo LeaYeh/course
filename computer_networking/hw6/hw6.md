@@ -9,6 +9,17 @@ explain each RR in all five sections of the reply.
 using dig.  
 
 **[ans]**  
+> (a) When use recursive query mode between `Client` and `Local name server`, `Local name server` 
+will cache query result in its dataset; Without that, only `Client` will know the answer.
+And `Local name server` will use iterative query mode between others NS.  
+
+![dig](images/dig.png)  
+`TTL` means that how many time to update. (e.g. if change mapping ip address NS 
+need `TTL` times to update)  
+
+> (b) Local name server -> (.) root-servers.net.  
+     Local name server -> (edu.) edu-servers.net.  
+     Local name server -> (ucla.edu.) dns.ucla.edu.  
 
 -----
 
@@ -18,13 +29,70 @@ and retrieve the message. Record everything that happens on the sessions.
 
 **[ans]**  
 
+**SMTP**  
+```
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+220 yehya-lab Python SMTP proxy version 0.3
+HELO www.nctu.edu.tw
+250 yehya-lab
+MAIL FROM:<smail2140@gmail.com>
+250 OK
+RCPT TO:<wdv4758h@gmail.com>
+250 OK
+DATA
+im a data
+FROM:smail2140@gmail.com
+TO:<wdv4758h@gmail.com>
+Subject:im a subject
+test mail test mail test mail test mail test mail test mail test mail
+ test mail test mail test mail test mail test mail test mail test mail
+final of the mail
+.
+QUIT
+
+```
+
+**POP3**  
+```
+$ telnet mail.popserver.com 110
+Trying 192.168.0.100
+Connected to mail.popserver.com.
+Escape character is '^]'.
++OK <21860.1076718099@mail.popserver.net>
+user USERNAME
++OK
+pass PASSWORD
++OK
+list
+1 3713
+2 83815
+3 6180
+4 3813
+5 2177
+6 4134
+7 7168
+8 18234
+.
+retr 1
++OK ???? octets
+[[message]]
+.
+dele 1
++OK
+quit
++OK
+Connection closed by foreign host.
+```
+
 -----
 
 (5) Telnet to your Web server (port 80) and get a document using HTTP 1.0. Observe
 the HTTP response headers. Record everything that happens in the session.  
 
 **[ans]**  
-
+![httpserver](images/webserver.png)  
 
 ## Written Exercises
 (5) What RRs may be used in the following situations? Explain each of them using an
