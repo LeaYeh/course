@@ -97,8 +97,16 @@ the HTTP response headers. Record everything that happens in the session.
 ## Written Exercises
 (5) What RRs may be used in the following situations? Explain each of them using an
 example.  
+a) In the process of a forward query.  
+b) In the process of a reverse query.  
+c) Resolve the domain name B, which is an alias of domain name A.  
+d) In mail forwarding.  
 
 **[ans]**  
+> (a) SOA, NS, A  
+> (b) PTR  
+> (c) CNAME  
+> (d) MX  
 
 -----
 
@@ -106,6 +114,9 @@ example.
 the differences between POP3 based webmail and IMAP4 based webmail.  
 
 **[ans]**  
+> IMAP4 allows messages to be stored and manipulated on mail system while POP3 
+only allows user to download their messages and store, manipulate messages on the 
+users machines.  
 
 -----
 
@@ -114,12 +125,22 @@ respectively (including the command and parameters used). Assume that the contro
 connection has already been established on port 21.  
 
 **[ans]**  
+> * control connection has already been established on port 21 
+>   * by USER $username => PASS $passwd
+> * Active mode
+>   * client will tell server IP (h1.h2.h3.h4) and port number (p1*256+p2)
+>   * then wait for the server to connect this socket.
+> * Passive mode
+>   * vice versa
+
 
 -----
 
 (26) How do the audio and video messages get synchronized in streaming?  
 
 **[ans]**  
-
+> Intra-stream synchronization  
+> Inter-stream synchronization  
+> Inter-object synchronization  
 
 
