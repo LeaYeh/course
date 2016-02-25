@@ -1,0 +1,3 @@
+[submodule "OSDI/lab/lab"]
+	path = OSDI/lab/lab
+	url = http://grass8.cs.nctu.edu.tw:8888/2016/osdi.git
