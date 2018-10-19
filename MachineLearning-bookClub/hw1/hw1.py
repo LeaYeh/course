@@ -5,7 +5,6 @@ import pandas as pd
 TRAINING_DATA_FILE_PATH = 'data/train.csv'
 TESTING_DATA_FILE_PATH = 'data/test.csv'
 
-
 class Model:
     def __init__(self):
         self.train_X = None
