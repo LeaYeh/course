@@ -24,11 +24,20 @@ class Model:
 class Data:
     def __init__(self, path):
         self.df = pd.read_csv(path, encoding='big5').replace('NR', 0)
-        self.all_date = [d.strip() for d in self.df['日期'].unique()]
+        self.feature = self._get_unique_feature()
+        self.normalization()
+        self.all_date = list(self.df['日期'].unique())
         self.all_month = {self._fetch_date_yyyymm(date) for date in self.all_date}
         self._group_data_by_month()
 
+    def _fetch_samples(self):
+        pass
+
+    def _get_unique_feature(self):
+        return list(self.df['測項'].unique())
+
     def normalization(self, trim_outlier=False):
+        self.df['']
         pass
 
     def _fetch_date_yyyymm(self, date):
@@ -48,10 +57,10 @@ class Data:
 
     def fetch_training_data(self):
         """ fetch first 20 days of month as training data set """
-        return self._gr
+        return
 
     def fetch_testing_data(self):
         pass
 
 
-Data(TRAINING_DATA_FILE)
+Data(TRAINING_DATA_FILE_PATH)
