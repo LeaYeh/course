@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import normalize
 
 
 TRAINING_DATA_FILE_PATH = 'data/train.csv'
@@ -22,8 +24,8 @@ class Model:
 
 class Data:
     def __init__(self, path):
-        self.df = pd.read_csv(path, encoding='big5').replace('NR', 0)
-        self.feature = self._get_unique_feature()
+        self.df = pd.read_csv(path, encoding='big5', header=0).replace('NR', 0)
+        self.all_feature = self._get_unique_feature()
         self.normalization()
         self.all_date = list(self.df['日期'].unique())
         self.all_month = {self._fetch_date_yyyymm(date) for date in self.all_date}
@@ -35,9 +37,29 @@ class Data:
     def _get_unique_feature(self):
         return list(self.df['測項'].unique())
 
+    @staticmethod
+    def plt_feature(feature_info):
+        df_values = pd.Series(feature_info['values'])
+        df_values.plot.hist(grid=True, bins=20, rwidth=0.9,
+                           color='#607c8e')
+        plt.title(feature_info['name'])
+        plt.xlabel('Counts')
+        plt.ylabel('Value')
+        plt.grid(axis='y', alpha=0.75)
+
     def normalization(self, trim_outlier=False):
-        self.df['']
-        pass
+        for feature in self.all_feature:
+            values = []
+            rows_val = self.df.loc[self.df['測項'] == feature].ix[:, '0':]
+            for i, row in rows_val.iterrows():
+                values.extend(row.values)
+            values = sorted(values)
+            if trim_outlier:
+                mean = np.mean(values, axis=0)
+                sd = np.std(values, axis=0)
+                values = [x for x in values if (x > mean - 2 * sd)]
+                values = [x for x in values if (x < mean + 2 * sd)]
+            Data.plt_feature({'name': feature, 'values': values})
 
     def _fetch_date_yyyymm(self, date):
         return '/'.join(date.split('/')[: -1])
